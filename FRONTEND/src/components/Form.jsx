@@ -7,32 +7,32 @@ const Form = ({ todos, setTodos }) => {
         setInput(e.target.value);
     };
 
-    const onsubmit = async (e) => {
+    const onsubmit = (e) => {
         e.preventDefault();
 
         // Create a new todo object
         const newTodo = { name: input, completed: false };
 
-        try {
-            // Send a POST request to the backend to add the new todo
-            const response = await fetch(import.meta.env.VITE_API_URL + "/todos", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newTodo),
+        // Send a POST request to the backend to add the new todo
+        fetch(import.meta.env.VITE_API_URL + "/todos", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newTodo),
+        })
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                setTodos([...todos, data])
+            })
+            .catch((error) => {
+                console.error('Error:', error);
             });
 
-            if (response.ok) {
-                const createdTodo = await response.json();
-                setTodos([...todos, createdTodo]); // Add the new todo to the state
-                setInput(''); // Clear the input field
-            } else {
-                console.error('Failed to add todo');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
+
+        setInput('');
     };
 
     return (
